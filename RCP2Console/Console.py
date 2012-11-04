@@ -25,9 +25,6 @@ class Console(wx.Frame):
         self._routerAddress = routerAddress
         self._router = ConsoleRouter(self._routerAddress)
         
-        #Here all subwindows are stored
-        self._subwindowsList = []
-        
         self.InitializeUI()
 
         #Run main message receiving timer
@@ -68,27 +65,21 @@ class Console(wx.Frame):
 
         self.SetMenuBar(mb)
 
+    def CreateNewSubwindow(self, pos=wx.TOP, caption=None):
+        subwindow = Subwindow(self, self._router)
+        self._auiMgr.AddPane(subwindow, pos, caption)
+        self._auiMgr.GetPaneByWidget(subwindow).DestroyOnClose(True)
+        self._auiMgr.Update()
+        return subwindow
+
     def OnAddSubwindow(self, event):
         dialog = SubwindowCreationDialog(None)
         if dialog.ShowModal() == wx.ID_OK:
             self.CreateNewSubwindow(dialog.GetPosition(), dialog.GetName())
         dialog.Destroy()      
         
-    def CreateNewSubwindow(self, pos=wx.TOP, caption=None):
-        subwindow = Subwindow(self, self._router)
-        self._auiMgr.AddPane(subwindow, pos, caption)
-        self._auiMgr.Update()
-        self._auiMgr.Bind(aui.EVT_AUI_PANE_CLOSE, self.OnCloseSubwindow)
-        self._subwindowsList.append(subwindow)
-        return subwindow
-    
-    def OnCloseSubwindow(self, event):
-        pane = event.pane.window
-        self._subwindowsList.remove(pane)
-        pane.DisconnectFromRouter()
-        pane.Destroy()
-
     def OnSaveLayout(self, event):
+        #Generate config dictionary
         layout = {}
         layout["SubwindowsLayout"] = self._auiMgr.SavePerspective()
         panes = {}
@@ -96,28 +87,27 @@ class Console(wx.Frame):
             panes[pane.name] = pane.window.SaveConfiguration()
         layout["SubwindowsConfigs"] = panes 
         
+        #Save to file
         f = open("layout.cfg", "w")
         f.write(json.dumps(layout))
         f.close()
 
     def OnLoadLayout(self, event):
+        #Load from file
         f = open("layout.cfg", "r")
         layout = json.load(f)
         f.close()
 
         #Close existing panes
         for pane in list(self._auiMgr.GetAllPanes()):
-            pane.window.DisconnectFromRouter()#Disconnect the window from the router first
-            pane.DestroyOnClose(True)#Make sure that it will be destroyed
             self._auiMgr.ClosePane(pane)
 
         #Create new panes with names from the config file   
         subwindowsConfigs = layout["SubwindowsConfigs"]
         for paneName in subwindowsConfigs.iterkeys():
             subwindow = self.CreateNewSubwindow()
-            pane = self._auiMgr.GetPaneByWidget(subwindow)
-            pane.Name(paneName)
+            self._auiMgr.GetPaneByWidget(subwindow).Name(paneName)
             subwindow.LoadConfiguration(subwindowsConfigs[paneName])
             
         #Load the stored perspective
-        self._auiMgr.LoadPerspective(layout["SubwindowsLayout"])       
+        self._auiMgr.LoadPerspective(layout["SubwindowsLayout"])

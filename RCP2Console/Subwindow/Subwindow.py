@@ -62,11 +62,16 @@ class Subwindow(wx.Panel):
         sizer.Add(self._view, 1, wx.EXPAND)
         self.SetSizer(sizer)
         self.Layout()
+        self.Bind(wx.EVT_WINDOW_DESTROY, self.OnDestroy)
+        
+    def OnDestroy(self, evt):
+        self.DisconnectFromRouter()
         
     def ProcessMessage(self, message):
         self._view.ProcessMessage(message)
 
     def DisconnectFromRouter(self):
+        print "DisconnectFromRouter"
         self._dataSource.DisconnectDataConsumer(self) #TEST ONLY!!!!!!!!!!!
 
     def SaveConfiguration(self):
