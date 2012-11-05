@@ -9,6 +9,8 @@ class Pipeline(object):
         '''
         Constructor
         '''
+        self._name = "Pipe name"
+        
         self._source = source
         self._destination = destination
         
@@ -19,3 +21,12 @@ class Pipeline(object):
 
     def DisconnectFromRouter(self):
         self._source.DisconnectDataConsumer(self)
+        
+    def GetName(self):
+        return self._name
+    
+    def SaveConfiguration(self):
+        return {"xxx":"aaa"}
+
+    def LoadConfiguration(self, config):
+        print config

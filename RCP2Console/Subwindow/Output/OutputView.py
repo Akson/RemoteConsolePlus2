@@ -39,11 +39,26 @@ class HTMLConsole(wx.Panel):
         self._htmlWindow.Scroll(0, self._htmlWindow.GetScrollRange(wx.VERTICAL)) 
         self._htmlWindow.Thaw()
         
-class OutputView(HTMLConsole):
+class OutputView(wx.Panel):
     '''
-    classdocs
+    OutputView manages views
     '''
 
     def __init__(self, parent):
-        HTMLConsole.__init__(self, parent)
-        self._view = None
+        wx.Panel.__init__(self, parent)
+        self._view = HTMLConsole(parent)
+        
+        #Create a main sizer which will contain an output view
+        self._sizer = wx.BoxSizer(wx.VERTICAL)
+        self.SetSizer(self._sizer)
+        self._sizer.Add(self._view, 1, wx.EXPAND)
+        self.Layout()
+
+    def ProcessMessage(self, newMessage):
+        self._view.ProcessMessage(newMessage)
+
+    def SaveConfiguration(self):
+        return {"Class":str(type(self._view))}
+
+    def LoadConfiguration(self, config):
+        print config
