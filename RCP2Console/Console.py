@@ -1,23 +1,22 @@
 '''Created by Dmytro Konobrytskyi, 2012(C)'''
-from RCP2Console.ConsoleRouter import ConsoleRouter
 import wx
 from agw import aui
-from agw.aui import aui_switcherdialog as ASD
-from RCP2Console.Subwindow.Subwindow import Subwindow
-from RCP2Console.Subwindow.CreationDialog import SubwindowCreationDialog
 import json
-import pprint
-from RCP2Console.agw.aui.framemanager import AuiPaneInfo
+
+from RCP2Console.ConsoleRouter import ConsoleRouter
+from RCP2Console.Subwindow.Subwindow import Subwindow
+from RCP2Console.SubwindowCreationDialog import SubwindowCreationDialog
 
 class Console(wx.Frame):
     '''
-    This is a main window class. 
-    It stores a ConsoleRouter object that routes messages to each subwindow.
+    This is a main window class which can have multiple subwindows. 
+    It stores a ConsoleRouter object that routes messages to each subwindow
+    and AuiManager that manages panes with subwindows inside.
     '''
 
     def __init__(self, routerAddress):
         '''
-        Constructor
+        Here we create wx.App and run a main loop.
         '''
         app = wx.App(redirect=False)  #default error output to console
 

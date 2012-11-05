@@ -4,12 +4,13 @@ import time
 
 class ConsoleRouter(object):
     '''
-    classdocs
+    A console router receives messages from an external router 
+    and routes them to all connected data consumers (fronts of pipelines)  
     '''
 
     def __init__(self, routerAddress):
         '''
-        Constructor
+        Creates required connections and initialize data
         '''
         
         self._routerAddress = routerAddress
@@ -38,4 +39,5 @@ class ConsoleRouter(object):
         self._dataConsumersList.append(dataConsumer)
         
     def DisconnectDataConsumer(self, dataConsumer):
+        print "DisconnectDataConsumer"
         self._dataConsumersList.remove(dataConsumer)
