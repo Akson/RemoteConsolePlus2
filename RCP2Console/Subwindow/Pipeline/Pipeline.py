@@ -9,7 +9,7 @@ class Pipeline(object):
         '''
         Constructor
         '''
-        self._name = "Pipe name"
+        self._name = "Pipeline name"
         
         self._source = source
         self._destination = destination
@@ -30,3 +30,6 @@ class Pipeline(object):
 
     def LoadConfiguration(self, config):
         print config
+        
+    def EditPipeline(self):
+        print "EditPipeline"

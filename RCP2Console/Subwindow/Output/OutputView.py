@@ -16,7 +16,7 @@ class HTMLConsole(wx.Panel):
         sizer = wx.BoxSizer(wx.VERTICAL)
         sizer.Add(self._htmlWindow, 1, wx.EXPAND)
         self.SetSizer(sizer)
-
+        
     def ProcessMessage(self, newMessage):
         #Save new message to buffer
         self._messagesList.append(newMessage)

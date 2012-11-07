@@ -32,7 +32,7 @@ class Console(wx.Frame):
         mainTimer.Start(100)
         timerOwner.Bind(wx.EVT_TIMER, self.ProcessMessagess, mainTimer)
         timerOwner.Bind(wx.EVT_IDLE, self.ProcessMessagess, mainTimer)
-
+        
         #Run main message loop
         app.MainLoop()
         
@@ -41,7 +41,7 @@ class Console(wx.Frame):
 
     def InitializeUI(self):
         wx.Frame.__init__(self, None, id=wx.ID_ANY, title="RCP2 Console", size=(800, 600))
-        
+
         self.CreateMenuBar()
         
         self._auiMgr = aui.AuiManager()
