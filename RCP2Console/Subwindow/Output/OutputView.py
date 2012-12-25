@@ -16,7 +16,7 @@ class HTMLConsole(wx.Panel):
         sizer = wx.BoxSizer(wx.VERTICAL)
         sizer.Add(self._htmlWindow, 1, wx.EXPAND)
         self.SetSizer(sizer)
-        
+
     def ProcessMessage(self, newMessage):
         #Save new message to buffer
         self._messagesList.append(newMessage)
@@ -46,7 +46,7 @@ class OutputView(wx.Panel):
 
     def __init__(self, parent):
         wx.Panel.__init__(self, parent)
-        self._view = HTMLConsole(parent)
+        self._view = HTMLConsole(self)
         
         #Create a main sizer which will contain an output view
         self._sizer = wx.BoxSizer(wx.VERTICAL)
