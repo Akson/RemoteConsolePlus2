@@ -1,6 +1,6 @@
 '''Created by Dmytro Konobrytskyi, 2012(C)'''
 import wx
-from agw import aui
+from wx.lib.agw import aui
 import json
 
 from RCP2Console.ConsoleRouter import ConsoleRouter
