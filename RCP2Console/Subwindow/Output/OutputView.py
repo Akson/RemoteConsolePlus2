@@ -70,8 +70,7 @@ class HTMLConsole(wx.Panel):
             self._messagesListLock.acquire()
 
             consoleText = '<body><font face="Consolas">'
-            for message in self._messagesList:
-                consoleText += "%s<br>" % message
+            consoleText += "<br>".join(self._messagesList)
             consoleText += "</font></body>"
     
             self._needUpdate = False
@@ -79,7 +78,7 @@ class HTMLConsole(wx.Panel):
             self._messagesListLock.release()
             
             #Update console content and scroll to the bottom
-            self._htmlWindow.Freeze()    
+            self._htmlWindow.Freeze()
             self._htmlWindow.SetPage(consoleText)
             self._htmlWindow.Scroll(0, self._htmlWindow.GetScrollRange(wx.VERTICAL)) 
             self._htmlWindow.Thaw()
@@ -90,7 +89,7 @@ class HTMLConsole(wx.Panel):
         self._messagesListLock.acquire()
 
         #Save new message to buffer
-        self._messagesList.append(newMessage)
+        self._messagesList.append(newMessage["Value"])
         
         #Limit buffer size
         self._messagesList = self._messagesList[-1000:]
