@@ -6,6 +6,7 @@ import json
 from RCP2Console.ConsoleRouter import ConsoleRouter
 from RCP2Console.Subwindow.Subwindow import Subwindow
 from RCP2Console.SubwindowCreationDialog import SubwindowCreationDialog
+import thread
 
 class Console(wx.Frame):
     '''
@@ -23,22 +24,15 @@ class Console(wx.Frame):
         #ConsoleRouter receives messages and passes them to views 
         self._routerAddress = routerAddress
         self._router = ConsoleRouter(self._routerAddress)
+
+        #Run a thread that process incoming messages
+        thread.start_new_thread(self._router.ConnectAndRunMessageProcessingLoop, ())
         
         self.InitializeUI()
 
-        #Run main message receiving timer
-        timerOwner = wx.EvtHandler()
-        mainTimer = wx.Timer(timerOwner, wx.ID_ANY)
-        mainTimer.Start(100)
-        timerOwner.Bind(wx.EVT_TIMER, self.ProcessMessagess, mainTimer)
-        timerOwner.Bind(wx.EVT_IDLE, self.ProcessMessagess, mainTimer)
-        
         #Run main message loop
         app.MainLoop()
         
-    def ProcessMessagess(self, event):
-        self._router.ProcessIncomingMessages()
-
     def InitializeUI(self):
         wx.Frame.__init__(self, None, id=wx.ID_ANY, title="RCP2 Console", size=(800, 600))
 

@@ -17,7 +17,7 @@ class Pipeline(object):
         self._source.ConnectDataConsumer(self)#TEST
         
     def ProcessMessage(self, message):
-        self._destination.ProcessMessage(message)
+        self._destination.ProcessMessage(message.replace(chr(0), "|"))
 
     def DisconnectFromRouter(self):
         self._source.DisconnectDataConsumer(self)

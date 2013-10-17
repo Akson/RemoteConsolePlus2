@@ -15,6 +15,10 @@ class ConsoleRouter(object):
         
         self._routerAddress = routerAddress
 
+        #Here we will store all data consumers where messages have to be routed
+        self._dataConsumersList = []
+        
+    def ConnectAndRunMessageProcessingLoop(self):
         #Initialize ZMQ
         self._context = zmq.Context()
         
@@ -22,18 +26,19 @@ class ConsoleRouter(object):
         self._inputSocket = self._context.socket(zmq.SUB)
         self._inputSocket.connect(self._routerAddress)
         self._inputSocket.setsockopt(zmq.SUBSCRIBE, "")
-
-        #Here we will store all data consumers where messages have to be routed
-        self._dataConsumersList = []
         
+        self.ProcessIncomingMessages()
+    
     def ProcessIncomingMessages(self):
-        try:
-            message = self._inputSocket.recv(zmq.NOBLOCK)
-            for consumer in self._dataConsumersList:
-                consumer.ProcessMessage(message)
-        except zmq.ZMQError, e:
-            print e
-            time.sleep(0.001)
+        while True:
+            try:
+                message = self._inputSocket.recv()
+                #print message 
+                for consumer in self._dataConsumersList:
+                    consumer.ProcessMessage(message)
+            except zmq.ZMQError, e:
+                print e
+                time.sleep(0.001)
 
     def ConnectDataConsumer(self, dataConsumer):
         self._dataConsumersList.append(dataConsumer)
