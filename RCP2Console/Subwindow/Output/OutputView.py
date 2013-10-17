@@ -1,6 +1,7 @@
 '''Created by Dmytro Konobrytskyi, 2012(C)'''
 
 import wx.html
+import wx.lib.agw.aui as aui
 import time
 from multiprocessing import Lock
 class HTMLConsole(wx.Panel):
@@ -13,10 +14,15 @@ class HTMLConsole(wx.Panel):
         wx.Panel.__init__(self, parent)
 
         self._messagesList = []
-        self._needUpdate = False;
+        self._needUpdate = False
+        self._lockedView = False
         
         self._htmlWindow = wx.html.HtmlWindow(self)
         sizer = wx.BoxSizer(wx.VERTICAL)
+
+        tb = self.BuildToolbar()
+        sizer.Add( tb, 0, wx.ALL | wx.ALIGN_LEFT | wx.EXPAND, 4 ) # add the toolbar to the sizer
+
         sizer.Add(self._htmlWindow, 1, wx.EXPAND)
         self.SetSizer(sizer)
         
@@ -27,16 +33,40 @@ class HTMLConsole(wx.Panel):
         self._mainTimer = wx.Timer(self, wx.ID_ANY)
         self._mainTimer.Start(50)
         self.Bind(wx.EVT_TIMER, self.CheckIfNeedUpdate, self._mainTimer)
-        
+
         self._messagesListLock = Lock()
+
+    def BuildToolbar( self ) :
+        tb = aui.AuiToolBar( self, -1 )
+        self.ToolBar = tb
+        tb.SetToolBitmapSize( ( 8, 8) )# this required for non-standard size buttons on MSW
+
+        self.Bind(wx.EVT_TOOL, self.OnToolLock, source = tb.AddSimpleTool(wx.ID_ANY, 'Lock view', wx.Image(r'RCP2Console\Resources\Lock.png', wx.BITMAP_TYPE_PNG).ConvertToBitmap(), 'Lock current view while processing messagse'))
+        self.Bind(wx.EVT_TOOL, self.OnToolSettings, source = tb.AddSimpleTool(wx.ID_ANY, 'Settings', wx.Image(r'RCP2Console\Resources\Configure.png', wx.BITMAP_TYPE_PNG).ConvertToBitmap(), 'Open settings window'))
+        self.Bind(wx.EVT_TOOL, self.OnToolClear, source = tb.AddSimpleTool(wx.ID_ANY, 'Clear', wx.Image(r'RCP2Console\Resources\Clear.png', wx.BITMAP_TYPE_PNG).ConvertToBitmap(), 'Clear all HTML text from console'))
         
+        tb.Realize()
+
+        return tb
+            
+    def OnToolClear(self, event=None):
+        self._messagesListLock.acquire()
+        self._messagesList = []
+        self._needUpdate = True
+        self._messagesListLock.release()
+            
+    def OnToolLock(self, event=None):
+        self._lockedView = not self._lockedView
+            
+    def OnToolSettings(self, event=None):
+        print "OnToolSettings"
+            
     def CheckIfNeedUpdate(self, event=None):
         if self._needUpdate:
             self.Refresh()
         
     def OnPaint(self, event=None):
-        if self._needUpdate:
-            
+        if self._needUpdate and not self._lockedView:
             self._messagesListLock.acquire()
 
             consoleText = '<body><font face="Consolas">'
@@ -55,7 +85,6 @@ class HTMLConsole(wx.Panel):
             self._htmlWindow.Thaw()
         
         dc = wx.PaintDC(self)#We need to create for solving infinity EVT_PAINT problem
-
 
     def ProcessMessage(self, newMessage):
         self._messagesListLock.acquire()
