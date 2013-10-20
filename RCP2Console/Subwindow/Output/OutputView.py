@@ -89,7 +89,7 @@ class HTMLConsole(wx.Panel):
         self._messagesListLock.acquire()
 
         #Save new message to buffer
-        self._messagesList.append(newMessage["Value"])
+        self._messagesList.append(newMessage["Data"])
         
         #Limit buffer size
         self._messagesList = self._messagesList[-1000:]

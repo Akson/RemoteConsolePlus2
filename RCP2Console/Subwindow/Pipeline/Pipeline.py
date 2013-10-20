@@ -32,8 +32,7 @@ class Pipeline(object):
         except:
             pass
         
-        if value == None:
-            parsedMessage["Value"] = messageComponents[1]
+        parsedMessage["Data"] = messageComponents[2]
         
         
         self._destination.ProcessMessage(parsedMessage)
