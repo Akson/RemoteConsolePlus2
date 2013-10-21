@@ -26,3 +26,6 @@ class CommandsProcessor(object):
             commandName = command[0:command.find("(")]
             if commandName == "ParseJson":
                 message.Data.update(json.loads(message.Data["Value"]))
+            if commandName == "VariableName":
+                variableName = command[command.find("(")+1:-1]
+                message.Data["Value"] = "<b>%s</b> = %s"%(variableName, message.Data["Value"])
