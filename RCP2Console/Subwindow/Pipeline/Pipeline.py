@@ -1,5 +1,22 @@
 '''Created by Dmytro Konobrytskyi, 2012(C)'''
 import json
+from RCP2Console.Subwindow.Pipeline.CommandsProcessor import CommandsProcessor
+
+class Message(object):
+    def __init__(self, rawMessage):
+        messageComponents = rawMessage.split(chr(0), 2)
+
+        self.Stream = messageComponents[0]
+        
+        #Try to parse JSON, if it does not work, just add value as a string
+        self.Info = {}
+        try:
+            self.Info = json.loads(messageComponents[1])
+        except:
+            pass
+        
+        self.Data = {"Value":messageComponents[2]}
+        
 
 class Pipeline(object):
     '''
@@ -17,23 +34,14 @@ class Pipeline(object):
         
         self._source.ConnectDataConsumer(self)#TEST
         
+        self._pipelineComponents = [CommandsProcessor()]
+        
     def ProcessMessage(self, message):
-        messageComponents = message.split(chr(0), 2)
-
-        parsedMessage = {}
-        parsedMessage["StreamName"] = messageComponents[0]
+        parsedMessage = Message(message)
         
-        
-        #Try to parse JSON, if it does not work, just add value as a string
-        value = None
-        try:
-            value = json.loads(messageComponents[1])
-            parsedMessage.update(value)
-        except:
-            pass
-        
-        parsedMessage["Data"] = messageComponents[2]
-        
+        #Move message through pipeline
+        for pipelineComponent in self._pipelineComponents:
+            pipelineComponent.ProcessMessage(parsedMessage)
         
         self._destination.ProcessMessage(parsedMessage)
 
