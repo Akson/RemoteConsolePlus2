@@ -20,8 +20,8 @@ class RCP2Client(object):
         additionalInfo = dict()
         additionalInfo["TimeStamp"] = int(time.time()*1000)
         if commands!=None: additionalInfo["Commands"] = commands
-
-        message = "%s%c%s%c%s"%(streamName, chr(0), json.dumps(additionalInfo), chr(0), str(value))
+        
+        message = "%s%c%s%c%s"%("" if streamName == None else streamName, chr(0), json.dumps(additionalInfo), chr(0), str(value))
     
-        print message
+        #print message
         self._socket.send(message)
