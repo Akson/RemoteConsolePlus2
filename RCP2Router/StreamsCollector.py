@@ -27,8 +27,7 @@ class StreamsCollector(object):
                 streamName = message[:message.find(chr(0))]
                 if streamName not in self._streamsSet:
                     self._streamsSet.add(streamName)
-                    
-                print self._streamsSet
+                    print self._streamsSet
             except zmq.ZMQError, e:
                 print e
                 time.sleep(0.001)
