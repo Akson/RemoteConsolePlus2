@@ -4,6 +4,7 @@ import wx.html
 import wx.lib.agw.aui as aui
 import time
 from multiprocessing import Lock
+import json
 class HTMLConsole(wx.Panel):
     '''
     This destination class is the default console window
@@ -89,7 +90,7 @@ class HTMLConsole(wx.Panel):
         self._messagesListLock.acquire()
 
         #Save new message to buffer
-        self._messagesList.append(newMessage["Data"])
+        self._messagesList.append("%s: %s"%(newMessage.Stream, str(newMessage.Data["Value"])))
         
         #Limit buffer size
         self._messagesList = self._messagesList[-1000:]
