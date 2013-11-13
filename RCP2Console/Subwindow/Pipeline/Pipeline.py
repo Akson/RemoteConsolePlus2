@@ -5,7 +5,7 @@ from RCP2Console.Subwindow.Pipeline.CommandsProcessor import CommandsProcessor
 class Message(object):
     def __init__(self, rawMessage):
         messageComponents = rawMessage.split(chr(0), 2)
-        print messageComponents
+        #print messageComponents
 
         self.Stream = messageComponents[0]
         

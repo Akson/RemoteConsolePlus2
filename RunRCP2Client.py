@@ -13,5 +13,6 @@ if __name__ == '__main__':
     i=0
     while True:
         rc.SendMessage("test%d"%(i))
+        rc.SendMessage("streamtest%d"%(i), "Stream1%d"%(i%5))
         i+=1
         time.sleep(0.1)
