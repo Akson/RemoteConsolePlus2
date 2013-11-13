@@ -19,7 +19,7 @@ class CommandsProcessor(object):
     def ProcessMessage(self, message):
         if "Commands" not in message.Info: return #No commands, no processing:) 
         
-        commands = message.Info["Commands"].split(";")
+        commands = message.Info["Commands"]
         commands = map(string.strip, commands)
         
         for command in commands:
